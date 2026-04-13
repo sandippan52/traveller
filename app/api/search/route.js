@@ -1,4 +1,3 @@
-import { client } from "@/lib/meilisearch";
 import Post from "@/models/Post";
 import User from "@/models/User";
 import connectDB from "@/lib/mongodb";
@@ -14,28 +13,32 @@ export async function GET(req) {
     return NextResponse.json({ posts: [], users: [] });
   }
 
-  
-  const postResults = await client.index("posts").search(q);
-  const userResults = await client.index("users").search(q);
+  try {
+    
+    const users = await User.find({
+      username: { $regex: q, $options: "i" }
+    })
+      .select("_id username profilepic")
+      .lean();
 
   
-  const postIds = postResults.hits.map(p => p.id);
+    const posts = await Post.find({
+      content: { $regex: q, $options: "i" }
+    })
+      .populate("creator", "username profilepic")
+      .sort({ createdAt: -1 })
+      .lean();
 
-  const fullPosts = await Post.find({
-    _id: { $in: postIds }
-  })
-    .populate("creator", "username profilepic")
-    .lean();
+    return NextResponse.json({
+      posts,
+      users
+    });
 
-  
-  const userIds = userResults.hits.map(u => u.id);
-
-  const fullUsers = await User.find({
-    _id: { $in: userIds }
-  }).lean();
-
-  return NextResponse.json({
-    posts: fullPosts,
-    users: fullUsers
-  });
+  } catch (error) {
+    console.error("Search error:", error);
+    return NextResponse.json(
+      { posts: [], users: [] },
+      { status: 500 }
+    );
+  }
 }
