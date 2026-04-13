@@ -47,36 +47,77 @@ const Page = () => {
     }
   }
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault()
+
+  //   let imageBase64 = null
+
+  //   if (image) {
+  //     const reader = new FileReader()
+  //     imageBase64 = await new Promise((resolve) => {
+  //       reader.onloadend = () => resolve(reader.result)
+  //       reader.readAsDataURL(image)
+  //     })
+  //   }
+
+  //   const res = await fetch("/api/editprofiles", {
+  //     method: "PATCH",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       name,
+  //       username,
+  //       bio,
+  //       image: imageBase64
+  //     })
+  //   })
+
+  //   const data = await res.json()
+
+  //   alert(data.message)
+
+  //   router.push("/me")
+  // }
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
+  e.preventDefault()
 
-    let imageBase64 = null
+  let imageUrl = preview 
 
-    if (image) {
-      const reader = new FileReader()
-      imageBase64 = await new Promise((resolve) => {
-        reader.onloadend = () => resolve(reader.result)
-        reader.readAsDataURL(image)
-      })
-    }
+  
+  if (image) {
+    const formData = new FormData()
+    formData.append("file", image)
+    formData.append("upload_preset", "traveller_upload")
 
-    const res = await fetch("/api/editprofiles", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        username,
-        bio,
-        image: imageBase64
-      })
-    })
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/CLOUDINARY_CLOUD_NAME/image/upload`, 
+      {
+        method: "POST",
+        body: formData
+      }
+    )
 
     const data = await res.json()
-
-    alert(data.message)
-
-    router.push("/me")
+    imageUrl = data.secure_url
   }
+
+  
+  const res = await fetch("/api/editprofiles", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name,
+      username,
+      bio,
+      image: imageUrl
+    })
+  })
+
+  const data = await res.json()
+
+  alert(data.message)
+  router.push("/me")
+}
 
   if (loading) {
     return (

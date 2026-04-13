@@ -1,6 +1,6 @@
 import connectDB from "@/lib/mongodb"
 import User from "@/models/User"
-import cloudinary from "@/lib/cloudinary"
+// import cloudinary from "@/lib/cloudinary"
 import { getServerSession } from "next-auth"
 // import { authOptions } from "../../auth/[...nextauth]/route"
 import { authOptions } from "../auth/[...nextauth]/route";
@@ -18,13 +18,13 @@ export async function PATCH(req) {
 
   const body = await req.json()
 
-  let imageUrl = null
+  // let imageUrl = null
 
   
-  if (body.image) {
-    const uploaded = await cloudinary.uploader.upload(body.image)
-    imageUrl = uploaded.secure_url
-  }
+  // if (body.image) {
+  //   const uploaded = await cloudinary.uploader.upload(body.image)
+  //   imageUrl = uploaded.secure_url
+  // }
 
   
   const updatedUser = await User.findByIdAndUpdate(
@@ -43,3 +43,4 @@ export async function PATCH(req) {
     user: updatedUser
   })
 }
+
