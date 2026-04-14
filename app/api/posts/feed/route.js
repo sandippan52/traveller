@@ -53,7 +53,8 @@ export async function GET(){
             {creator : {$in : followingId}},
             {creator : {$in : followerId}, category : "group"},
             {creator : userId},
-            {category : "group"}
+            {category : "group"},
+            {createdAt : {$gte : someRecentDate}}
         ]
     }).populate("creator", "name username profilepic")
       .sort({createdAt : -1})
