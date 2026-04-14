@@ -11,6 +11,7 @@ const page = () => {
 const [chats, setChats] = useState([])
 const [currentuserId, setCurrentuserId] = useState('')
 const { user, loading } = useAuthRedirect()
+const router = useRouter()
 
 
 const fetchChats = async()=>{
@@ -28,6 +29,12 @@ setCurrentuserId(data.currUser)
 
 useEffect(() => {
   fetchChats()
+
+   const interval = setInterval(() => {
+    fetchChats()
+  }, 3000) 
+
+  return () => clearInterval(interval)
 }, [])
 
 if (loading) {
