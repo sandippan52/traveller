@@ -14,6 +14,7 @@ const {searchParams}= new URL(req.url)
 const conversationId  = searchParams.get("conversationId")
 
 const allMessages = await Message.find({conversation : conversationId  }).populate("sender","username")
+                                                                         .sort({ updatedAt: -1 })
 
 return NextResponse.json(allMessages)
 
