@@ -81,7 +81,7 @@ const Page = () => {
   const handleSubmit = async (e) => {
   e.preventDefault()
 
-  let imageUrl = preview 
+  let imageUrl = null
 
   
   if (image) {

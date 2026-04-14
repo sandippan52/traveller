@@ -33,7 +33,7 @@ export async function PATCH(req) {
       name: body.name,
       username: body.username,
       bio: body.bio,
-      ...(imageUrl && { profilepic: imageUrl })
+      ...(body.image && { profilepic: body.image })
     },
     { new: true }
   )
