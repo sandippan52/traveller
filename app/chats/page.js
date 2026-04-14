@@ -28,7 +28,7 @@ setCurrentuserId(data.currUser)
 
 useEffect(() => {
   fetchChats()
-}, [])
+}, [chats])
 
 if (loading) {
     return (
