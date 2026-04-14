@@ -99,6 +99,7 @@ const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 
     const data = await res.json()
     imageUrl = data.secure_url
+  
   }
 
   
@@ -114,6 +115,7 @@ const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
   })
 
   const data = await res.json()
+  console.log(data)
 
   alert(data.message)
   router.push("/me")
