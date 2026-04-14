@@ -3,7 +3,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import {Router} from 'next/router'
+
 import useAuthRedirect from '@/hooks/useAuthRedirect'
 
 const page = () => {
@@ -11,7 +11,7 @@ const page = () => {
 const [chats, setChats] = useState([])
 const [currentuserId, setCurrentuserId] = useState('')
 const { user, loading } = useAuthRedirect()
-const router = useRouter(Router)
+
 
 const fetchChats = async()=>{
 
@@ -28,7 +28,13 @@ setCurrentuserId(data.currUser)
 
 useEffect(() => {
   fetchChats()
-}, [chats])
+
+   const interval = setInterval(() => {
+    fetchChats()
+  }, 3000) 
+
+  return () => clearInterval(interval)
+}, [])
 
 if (loading) {
     return (
