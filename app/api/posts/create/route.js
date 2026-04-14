@@ -20,26 +20,22 @@ export async function POST(req){
    }
    
    
-   let imageUrl = null
-   if(body.image){
-   const uploadedImage = await cloudinary.uploader.upload(body.image)
-   imageUrl = uploadedImage.secure_url
-   }
+   
    const newPost = await Post.create({
         creator : session.user.id,
         category : body.category,
         content : body.content,
-        media : imageUrl?[imageUrl]:[],
+        media : body.image ? [body.image] : [],
         destination : body.destination,
         members : [session.user.id]
 
    })
-   await client.index("posts").addDocuments([{
-  id: newPost._id.toString(),
-  content: newPost.content,
-  destination: newPost.destination?.to || "",
-  category: newPost.category
-}])
+//    await client.index("posts").addDocuments([{
+//   id: newPost._id.toString(),
+//   content: newPost.content,
+//   destination: newPost.destination?.to || "",
+//   category: newPost.category
+// }])
 
    return Response.json({newPost})
 

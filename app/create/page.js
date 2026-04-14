@@ -18,38 +18,91 @@ const Page = () => {
   const { user, loading } = useAuthRedirect()
 
   const postSubmit = async (e) => {
-    e.preventDefault()
+  e.preventDefault()
 
-    let imageBase64 = null;
-    if (media) {
-      const reader = new FileReader()
-      imageBase64 = await new Promise((resolve) => {
-        reader.onloadend = () => resolve(reader.result)
-        reader.readAsDataURL(media)
-      })
-    }
+  let imageUrl = null
 
-    const res = await fetch("/api/posts/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        category,
-        content,
-        image: imageBase64,
-        destination: { from, to }
-      })
-    })
+  
+  if (media) {
+    const formData = new FormData()
+    formData.append("file", media)
+    formData.append("upload_preset", "traveller_upload")
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      {
+        method: "POST",
+        body: formData
+      }
+    )
 
     const data = await res.json()
-    alert(data.message)
 
-    setCategory("")
-    setContent("")
-    setMedia(null)
-    setPreview(null)
-    setFrom("")
-    setTo("")
+    if (!data.secure_url) {
+      alert("Image upload failed")
+      return
+    }
+
+    imageUrl = data.secure_url
   }
+
+  
+  const res = await fetch("/api/posts/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      category,
+      content,
+      image: imageUrl,
+      destination: { from, to }
+    })
+  })
+
+  const data = await res.json()
+  alert("Post created ")
+
+  setCategory("")
+  setContent("")
+  setMedia(null)
+  setPreview(null)
+  setFrom("")
+  setTo("")
+}
+  // const postSubmit = async (e) => {
+  //   e.preventDefault()
+
+  //   let imageBase64 = null;
+  //   if (media) {
+  //     const reader = new FileReader()
+  //     imageBase64 = await new Promise((resolve) => {
+  //       reader.onloadend = () => resolve(reader.result)
+  //       reader.readAsDataURL(media)
+  //     })
+  //   }
+
+  //   const res = await fetch("/api/posts/create", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       category,
+  //       content,
+  //       image: imageBase64,
+  //       destination: { from, to }
+  //     })
+  //   })
+
+  //   const data = await res.json()
+  //   alert(data.message)
+
+  //   setCategory("")
+  //   setContent("")
+  //   setMedia(null)
+  //   setPreview(null)
+  //   setFrom("")
+  //   setTo("")
+  // }
 
   const handleImageChange = (file) => {
     setMedia(file)
