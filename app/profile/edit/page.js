@@ -88,9 +88,9 @@ const Page = () => {
     const formData = new FormData()
     formData.append("file", image)
     formData.append("upload_preset", "traveller_upload")
-
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/CLOUDINARY_CLOUD_NAME/image/upload`, 
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, 
       {
         method: "POST",
         body: formData
