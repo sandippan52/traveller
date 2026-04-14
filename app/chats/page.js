@@ -28,12 +28,6 @@ setCurrentuserId(data.currUser)
 
 useEffect(() => {
   fetchChats()
-
-   const interval = setInterval(() => {
-    fetchChats()
-  }, 3000) 
-
-  return () => clearInterval(interval)
 }, [])
 
 if (loading) {
